@@ -1,28 +1,14 @@
 package user
 
-import (
-	"encoding/json"
-
-	"github.com/google/uuid"
-)
-
-type UserID uuid.UUID
-
-func (u UserID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(uuid.UUID(u).String())
-}
-
-func NewUserID() UserID {
-	return UserID(uuid.New())
-}
+import "github.com/ishchenko-gv/go-example-app/app/user/userid"
 
 type User struct {
-	ID    UserID `json:"id"`
-	Email string `json:"email"`
+	ID    userid.ID `json:"id"`
+	Email string    `json:"email"`
 }
 
 func NewUser() *User {
 	return &User{
-		ID: NewUserID(),
+		ID: userid.New(),
 	}
 }

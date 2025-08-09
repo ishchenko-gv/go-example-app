@@ -5,22 +5,31 @@ import (
 
 	"github.com/ishchenko-gv/go-example-app/app/common/money"
 	"github.com/ishchenko-gv/go-example-app/app/order"
+	"github.com/ishchenko-gv/go-example-app/app/order/orderid"
 	"github.com/ishchenko-gv/go-example-app/app/user"
+	"github.com/ishchenko-gv/go-example-app/app/user/userid"
 )
 
 type Repo struct{}
 
-var _ order.Repo = (*Repo)(nil)
+type repo interface {
+	Insert(context.Context, *order.Order) error
+	Find(context.Context, orderid.ID) (*order.Order, error)
+	FindAllByUserID(context.Context, userid.ID) ([]order.Order, error)
+	Remove(context.Context, orderid.ID) error
+}
+
+var _ repo = (*Repo)(nil)
 
 func (r *Repo) Insert(ctx context.Context, order *order.Order) error {
 	return nil
 }
 
-func (r *Repo) Find(ctx context.Context, id order.OrderID) (*order.Order, error) {
-	return order.NewOrder(user.NewUserID(), []order.OrderItem{}), nil
+func (r *Repo) Find(ctx context.Context, id orderid.ID) (*order.Order, error) {
+	return order.NewOrder(userid.New(), []order.OrderItem{}), nil
 }
 
-func (r *Repo) FindAllByUserID(ctx context.Context, userID user.UserID) ([]order.Order, error) {
+func (r *Repo) FindAllByUserID(ctx context.Context, userID userid.ID) ([]order.Order, error) {
 	orders := []order.Order{
 		*order.NewOrder(user.NewUser().ID, []order.OrderItem{
 			*order.NewOrderItem("Item 1", *money.NewMoney(100, money.Euro)),
@@ -37,6 +46,6 @@ func (r *Repo) FindAllByUserID(ctx context.Context, userID user.UserID) ([]order
 	return orders, nil
 }
 
-func (r *Repo) Remove(ctx context.Context, id order.OrderID) error {
+func (r *Repo) Remove(ctx context.Context, id orderid.ID) error {
 	return nil
 }

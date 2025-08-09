@@ -1,44 +1,21 @@
 package order
 
 import (
-	"encoding/json"
-
 	"github.com/google/uuid"
 	"github.com/ishchenko-gv/go-example-app/app/common/money"
-	"github.com/ishchenko-gv/go-example-app/app/user"
+	"github.com/ishchenko-gv/go-example-app/app/order/orderid"
+	"github.com/ishchenko-gv/go-example-app/app/user/userid"
 )
 
-type OrderID uuid.UUID
-
-func (o OrderID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(uuid.UUID(o).String())
-}
-
-func NewOrderID() OrderID {
-	return OrderID(uuid.New())
-}
-
-func ZeroOrderID() OrderID {
-	return OrderID(uuid.UUID{})
-}
-
-func OrderIDFromString(id string) (OrderID, error) {
-	parsed, err := uuid.Parse(id)
-	if err != nil {
-		return ZeroOrderID(), err
-	}
-	return OrderID(parsed), nil
-}
-
 type Order struct {
-	ID     OrderID     `json:"id"`
-	UserID user.UserID `json:"-"`
+	ID     orderid.ID  `json:"id"`
+	UserID userid.ID   `json:"-"`
 	Items  []OrderItem `json:"items"`
 }
 
-func NewOrder(userID user.UserID, items []OrderItem) *Order {
+func NewOrder(userID userid.ID, items []OrderItem) *Order {
 	return &Order{
-		ID:     NewOrderID(),
+		ID:     orderid.New(),
 		UserID: userID,
 		Items:  items,
 	}

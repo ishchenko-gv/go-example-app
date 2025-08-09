@@ -5,6 +5,7 @@ import (
 
 	"github.com/ishchenko-gv/go-example-app/api/apictx"
 	"github.com/ishchenko-gv/go-example-app/app/order"
+	"github.com/ishchenko-gv/go-example-app/app/order/orderid"
 )
 
 type Endpoints struct {
@@ -24,7 +25,7 @@ func (ep *Endpoints) GetOrders(w http.ResponseWriter, r *http.Request) (any, err
 }
 
 func (ep *Endpoints) GetOrder(w http.ResponseWriter, r *http.Request) (any, error) {
-	id, err := order.OrderIDFromString(r.PathValue("id"))
+	id, err := orderid.FromString(r.PathValue("id"))
 	if err != nil {
 		return nil, err
 	}
