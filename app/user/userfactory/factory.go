@@ -1,9 +1,9 @@
-package orderfactory
+package userfactory
 
 import (
 	"database/sql"
 
-	"github.com/ishchenko-gv/go-example-app/app/order/internal"
+	"github.com/ishchenko-gv/go-example-app/app/user/internal"
 )
 
 func NewService(repo internal.RepoInterface) *internal.Service {

@@ -7,8 +7,9 @@ type User struct {
 	Email string    `json:"email"`
 }
 
-func NewUser() *User {
+func NewUser(email string) *User {
 	return &User{
-		ID: userid.New(),
+		ID:    userid.New(),
+		Email: email,
 	}
 }

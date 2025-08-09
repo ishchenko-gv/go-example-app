@@ -6,6 +6,7 @@ import (
 	"github.com/ishchenko-gv/go-example-app/api/orderapi"
 	"github.com/ishchenko-gv/go-example-app/api/userapi"
 	"github.com/ishchenko-gv/go-example-app/app/order"
+	"github.com/ishchenko-gv/go-example-app/app/user"
 )
 
 type handler struct {
@@ -16,10 +17,11 @@ type handler struct {
 type Endpoint func(http.ResponseWriter, *http.Request) (any, error)
 
 func NewHandler(
+	userService user.Service,
 	orderService order.Service,
 ) *handler {
 	return &handler{
-		User:  userapi.NewEndpoints(),
+		User:  userapi.NewEndpoints(userService),
 		Order: orderapi.NewEndpoints(orderService),
 	}
 }
@@ -35,6 +37,7 @@ func (h *handler) Setup() *http.ServeMux {
 
 func (h *handler) setupUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /users/self", wrap(h.User.Self))
+	mux.HandleFunc("POST /users", wrap(h.User.PostUser))
 }
 
 func (h *handler) setupOrderRoutes(mux *http.ServeMux) {

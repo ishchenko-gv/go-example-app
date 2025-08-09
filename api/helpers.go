@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -21,13 +22,15 @@ func jsonWriterWrap(endpoint Endpoint) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp, err := endpoint(w, r)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			fmt.Println(err.Error())
+			http.Error(w, "internal error", 500)
 			return
 		}
 
 		err = json.NewEncoder(w).Encode(resp)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			fmt.Println(err.Error())
+			http.Error(w, "internal error", 500)
 			return
 		}
 	}

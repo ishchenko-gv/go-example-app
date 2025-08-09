@@ -9,7 +9,7 @@ import (
 )
 
 type Service struct {
-	Repo repo
+	Repo RepoInterface
 }
 
 var _ order.Service = (*Service)(nil)

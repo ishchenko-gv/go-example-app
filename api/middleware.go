@@ -34,7 +34,8 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		reqDump, err := httputil.DumpRequest(r, true)
 		if err != nil {
-			http.Error(rw, err.Error(), 500)
+			fmt.Printf("failed to dump request: %s\n", err.Error())
+			http.Error(rw, "internal error", 500)
 		}
 
 		fmt.Printf("%s", string(reqDump))
@@ -45,7 +46,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		user := user.NewUser()
+		user := user.NewUser("")
 		r = apictx.SetUser(r, user)
 
 		next.ServeHTTP(rw, r)
