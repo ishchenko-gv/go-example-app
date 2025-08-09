@@ -6,7 +6,7 @@ import (
 	"github.com/ishchenko-gv/go-example-app/app/user/internal"
 )
 
-func NewService(repo internal.RepoInterface) *internal.Service {
+func NewService(repo internal.Repository) *internal.Service {
 	return &internal.Service{
 		Repo: repo,
 	}

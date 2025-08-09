@@ -22,7 +22,7 @@ func (ep *Endpoints) Self(w http.ResponseWriter, r *http.Request) (any, error) {
 	return apictx.User(r), nil
 }
 
-func (ep *Endpoints) PostUser(w http.ResponseWriter, r *http.Request) (any, error) {
+func (ep *Endpoints) PostRegister(w http.ResponseWriter, r *http.Request) (any, error) {
 	var reqBody UserCreateBody
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
 	if err != nil {
@@ -31,5 +31,25 @@ func (ep *Endpoints) PostUser(w http.ResponseWriter, r *http.Request) (any, erro
 
 	u := user.NewUser(reqBody.Email)
 
+	err = issueJwt(w, u)
+	if err != nil {
+		return nil, err
+	}
+
 	return u, ep.UserService.CreateUser(r.Context(), u, reqBody.Password)
+}
+
+func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, error) {
+	var reqBody UserCreateBody
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	usr, err := ep.UserService.AuthenticateByEmail(r.Context(), reqBody.Email, reqBody.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return usr, nil
 }

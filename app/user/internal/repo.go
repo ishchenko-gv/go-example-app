@@ -5,17 +5,19 @@ import (
 	"database/sql"
 
 	"github.com/ishchenko-gv/go-example-app/app/user"
+	"github.com/ishchenko-gv/go-example-app/app/user/userid"
 )
 
 type Repo struct {
 	DB *sql.DB
 }
 
-type RepoInterface interface {
+type Repository interface {
 	Insert(ctx context.Context, user *user.User, password string) error
+	FindByEmail(ctx context.Context, email string) (*user.User, string, error)
 }
 
-var _ RepoInterface = (*Repo)(nil)
+var _ Repository = (*Repo)(nil)
 
 func (r *Repo) Insert(ctx context.Context, user *user.User, password string) error {
 	_, err := r.DB.Exec(
@@ -26,4 +28,23 @@ func (r *Repo) Insert(ctx context.Context, user *user.User, password string) err
 	)
 
 	return err
+}
+
+func (r *Repo) FindByEmail(ctx context.Context, email string) (*user.User, string, error) {
+	usr := &user.User{}
+	var id []uint8
+	var pwd string
+
+	q := "SELECT id, email, password FROM users WHERE email = $1"
+	err := r.DB.QueryRow(q, email).Scan(&id, &usr.Email, &pwd)
+	if err != nil {
+		return nil, "", err
+	}
+
+	usr.ID, err = userid.FromString(string(id))
+	if err != nil {
+		return nil, "", err
+	}
+
+	return usr, pwd, nil
 }

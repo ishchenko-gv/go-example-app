@@ -37,7 +37,8 @@ func (h *handler) Setup() *http.ServeMux {
 
 func (h *handler) setupUserRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /users/self", wrap(h.User.Self))
-	mux.HandleFunc("POST /users", wrap(h.User.PostUser))
+	mux.HandleFunc("POST /users/register", wrap(h.User.PostRegister))
+	mux.HandleFunc("POST /users/login", wrap(h.User.PostLogin))
 }
 
 func (h *handler) setupOrderRoutes(mux *http.ServeMux) {

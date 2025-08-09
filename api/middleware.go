@@ -46,6 +46,11 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		// claims, err := userapi.VerifyJwt(r)
+		// if err != nil {
+		// 	fmt.Printf("failed to verify jwt: %s\n", err.Error())
+		// 	http.Error(rw, "internal error", 500)
+		// }
 		user := user.NewUser("")
 		r = apictx.SetUser(r, user)
 
