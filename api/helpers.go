@@ -20,7 +20,6 @@ func wrap(endpoint Endpoint) http.HandlerFunc {
 func jsonWriterWrap(endpoint Endpoint) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resp, err := endpoint(w, r)
-
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

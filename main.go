@@ -5,10 +5,17 @@ import (
 
 	"github.com/ishchenko-gv/go-example-app/api"
 	"github.com/ishchenko-gv/go-example-app/app/order/orderfactory"
+	"github.com/ishchenko-gv/go-example-app/db"
+	"github.com/ishchenko-gv/go-example-app/env"
 )
 
 func main() {
-	orderRepo := orderfactory.NewRepo()
+	env.Setup()
+
+	db.Connect()
+	defer db.DB.Close()
+
+	orderRepo := orderfactory.NewRepo(db.DB)
 	orderService := orderfactory.NewService(orderRepo)
 
 	handler := api.NewHandler(orderService).Setup()

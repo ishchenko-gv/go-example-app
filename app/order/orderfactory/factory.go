@@ -1,6 +1,10 @@
 package orderfactory
 
-import "github.com/ishchenko-gv/go-example-app/app/order/internal"
+import (
+	"database/sql"
+
+	"github.com/ishchenko-gv/go-example-app/app/order/internal"
+)
 
 func NewService(repo *internal.Repo) *internal.Service {
 	return &internal.Service{
@@ -8,6 +12,8 @@ func NewService(repo *internal.Repo) *internal.Service {
 	}
 }
 
-func NewRepo() *internal.Repo {
-	return &internal.Repo{}
+func NewRepo(db *sql.DB) *internal.Repo {
+	return &internal.Repo{
+		DB: db,
+	}
 }

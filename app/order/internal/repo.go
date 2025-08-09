@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/ishchenko-gv/go-example-app/app/common/money"
 	"github.com/ishchenko-gv/go-example-app/app/order"
@@ -10,7 +11,9 @@ import (
 	"github.com/ishchenko-gv/go-example-app/app/user/userid"
 )
 
-type Repo struct{}
+type Repo struct {
+	DB *sql.DB
+}
 
 type repo interface {
 	Insert(context.Context, *order.Order) error
@@ -22,7 +25,8 @@ type repo interface {
 var _ repo = (*Repo)(nil)
 
 func (r *Repo) Insert(ctx context.Context, order *order.Order) error {
-	return nil
+	_, err := r.DB.Exec("INSERT INTO orders (id, user_id) VALUES ($1, $2)", order.ID.String(), order.UserID.String())
+	return err
 }
 
 func (r *Repo) Find(ctx context.Context, id orderid.ID) (*order.Order, error) {

@@ -1,0 +1,18 @@
+services:
+  db:
+    container_name: db
+    image: postgres:latest
+    environment:
+      - PGUSER=${POSTGRES_USER}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
+      - PGSSLMODE=disable
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data 
+
+volumes:
+  pgdata:
