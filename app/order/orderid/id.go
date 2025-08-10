@@ -1,33 +1,33 @@
 package orderid
 
 import (
-	"encoding/json"
-
 	"github.com/google/uuid"
+	"github.com/ishchenko-gv/go-example-app/app/common/id"
 )
 
-type ID uuid.UUID
-
-func (id ID) String() string {
-	return uuid.UUID(id).String()
-}
-
-func (id ID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
+type ID struct {
+	id.ID
 }
 
 func New() ID {
-	return ID(uuid.New())
+	return ID{
+		ID: id.ID(uuid.New()),
+	}
 }
 
 func Zero() ID {
-	return ID(uuid.UUID{})
+	return ID{
+		ID: id.Zero(),
+	}
 }
 
-func FromString(id string) (ID, error) {
-	parsed, err := uuid.Parse(id)
+func FromString(value string) (ID, error) {
+	v, err := id.FromString(value)
 	if err != nil {
-		return Zero(), err
+		return Zero(), nil
 	}
-	return ID(parsed), nil
+
+	return ID{
+		ID: v,
+	}, nil
 }

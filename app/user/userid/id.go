@@ -1,70 +1,33 @@
 package userid
 
 import (
-	"database/sql/driver"
-	"encoding/json"
-
 	"github.com/google/uuid"
+	"github.com/ishchenko-gv/go-example-app/app/common/id"
 )
 
-type ID uuid.UUID
-
-func (id ID) String() string {
-	return uuid.UUID(id).String()
-}
-
-func (id *ID) Scan(value any) error {
-	if value == nil || value == "" {
-		*id = Zero()
-		return nil
-	}
-
-	v, ok := value.([]uint8)
-	if !ok {
-		*id = Zero()
-		return nil
-	}
-
-	var err error
-	*id, err = FromString(string(v))
-	if err != nil {
-		*id = Zero()
-		return nil
-	}
-
-	return nil
-}
-
-func (id ID) Value() (driver.Value, error) {
-	return id.String(), nil
-}
-
-func (id ID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
-}
-
-func (id *ID) UnmarshalJSON(data []byte) error {
-	parsed, err := FromString(string(data))
-	if err != nil {
-		return err
-	}
-
-	*id = parsed
-	return nil
+type ID struct {
+	id.ID
 }
 
 func New() ID {
-	return ID(uuid.New())
+	return ID{
+		ID: id.ID(uuid.New()),
+	}
 }
 
 func Zero() ID {
-	return ID(uuid.UUID{})
+	return ID{
+		ID: id.Zero(),
+	}
 }
 
-func FromString(id string) (ID, error) {
-	parsed, err := uuid.Parse(id)
+func FromString(value string) (ID, error) {
+	v, err := id.FromString(value)
 	if err != nil {
-		return Zero(), err
+		return Zero(), nil
 	}
-	return ID(parsed), nil
+
+	return ID{
+		ID: v,
+	}, nil
 }
