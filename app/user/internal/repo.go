@@ -33,15 +33,9 @@ func (r *Repo) Insert(ctx context.Context, user *user.User, password string) err
 
 func (r *Repo) Find(ctx context.Context, userID userid.ID) (*user.User, error) {
 	usr := &user.User{}
-	var id []uint8
 
 	q := "SELECT id, email FROM users WHERE id = $1"
-	err := r.DB.QueryRow(q, userID.String()).Scan(&id, &usr.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	usr.ID, err = userid.FromString(string(id))
+	err := r.DB.QueryRow(q, userID).Scan(&usr.ID, &usr.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -51,16 +45,10 @@ func (r *Repo) Find(ctx context.Context, userID userid.ID) (*user.User, error) {
 
 func (r *Repo) FindByEmail(ctx context.Context, email string) (*user.User, string, error) {
 	usr := &user.User{}
-	var id []uint8
 	var pwd string
 
 	q := "SELECT id, email, password FROM users WHERE email = $1"
-	err := r.DB.QueryRow(q, email).Scan(&id, &usr.Email, &pwd)
-	if err != nil {
-		return nil, "", err
-	}
-
-	usr.ID, err = userid.FromString(string(id))
+	err := r.DB.QueryRow(q, email).Scan(&usr.ID, &usr.Email, &pwd)
 	if err != nil {
 		return nil, "", err
 	}
