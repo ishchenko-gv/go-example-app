@@ -29,14 +29,14 @@ func (ep *Endpoints) PostRegister(w http.ResponseWriter, r *http.Request) (any, 
 		return nil, err
 	}
 
-	u := user.NewUser(reqBody.Email)
+	usr := user.NewUser(reqBody.Email)
 
-	err = issueJwt(w, u)
+	err = issueJwt(w, usr)
 	if err != nil {
 		return nil, err
 	}
 
-	return u, ep.UserService.CreateUser(r.Context(), u, reqBody.Password)
+	return usr, ep.UserService.CreateUser(r.Context(), usr, reqBody.Password)
 }
 
 func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, error) {
@@ -47,6 +47,11 @@ func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, err
 	}
 
 	usr, err := ep.UserService.AuthenticateByEmail(r.Context(), reqBody.Email, reqBody.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	err = issueJwt(w, usr)
 	if err != nil {
 		return nil, err
 	}

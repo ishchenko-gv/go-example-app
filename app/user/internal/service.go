@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/ishchenko-gv/go-example-app/app/user"
+	"github.com/ishchenko-gv/go-example-app/app/user/userid"
 )
 
 type Service struct {
@@ -20,6 +21,10 @@ func (s *Service) CreateUser(ctx context.Context, user *user.User, password stri
 	}
 
 	return s.Repo.Insert(ctx, user, hashedPassword)
+}
+
+func (s *Service) GetUser(ctx context.Context, userID userid.ID) (*user.User, error) {
+	return s.Repo.Find(ctx, userID)
 }
 
 func (s *Service) AuthenticateByEmail(ctx context.Context, email string, password string) (*user.User, error) {

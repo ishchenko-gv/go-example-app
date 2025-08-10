@@ -10,29 +10,38 @@ import (
 )
 
 type handler struct {
-	User  *userapi.Endpoints
-	Order *orderapi.Endpoints
+	Middleware *middleware
+	User       *userapi.Endpoints
+	Order      *orderapi.Endpoints
 }
 
 type Endpoint func(http.ResponseWriter, *http.Request) (any, error)
 
 func NewHandler(
+	middleware *middleware,
 	userService user.Service,
 	orderService order.Service,
 ) *handler {
 	return &handler{
-		User:  userapi.NewEndpoints(userService),
-		Order: orderapi.NewEndpoints(orderService),
+		Middleware: middleware,
+		User:       userapi.NewEndpoints(userService),
+		Order:      orderapi.NewEndpoints(orderService),
 	}
 }
 
-func (h *handler) Setup() *http.ServeMux {
+func (h *handler) Setup() http.Handler {
 	mux := http.NewServeMux()
 
 	h.setupUserRoutes(mux)
 	h.setupOrderRoutes(mux)
 
-	return mux
+	wrappedMux := chainMiddlewares(
+		h.Middleware.JsonContentMiddleware,
+		h.Middleware.AuthMiddleware,
+		h.Middleware.LoggingMiddleware,
+	)(mux)
+
+	return wrappedMux
 }
 
 func (h *handler) setupUserRoutes(mux *http.ServeMux) {

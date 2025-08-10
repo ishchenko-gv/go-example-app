@@ -7,15 +7,7 @@ import (
 )
 
 func wrap(endpoint Endpoint) http.HandlerFunc {
-	middlewaresChain := chainMiddlewares(
-		loggingMiddleware,
-		jsonResponseMiddleware,
-		authMiddleware,
-	)
-
-	jsonWriter := jsonWriterWrap(endpoint)
-
-	return middlewaresChain(jsonWriter).ServeHTTP
+	return jsonWriterWrap(endpoint)
 }
 
 func jsonWriterWrap(endpoint Endpoint) http.HandlerFunc {

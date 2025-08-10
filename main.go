@@ -22,7 +22,10 @@ func main() {
 	orderRepo := orderfactory.NewRepo(db.DB)
 	orderService := orderfactory.NewService(orderRepo)
 
+	middlerware := api.NewMiddleware(userService)
+
 	handler := api.NewHandler(
+		middlerware,
 		userService,
 		orderService,
 	).Setup()

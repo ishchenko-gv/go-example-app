@@ -14,6 +14,7 @@ type Repo struct {
 
 type Repository interface {
 	Insert(ctx context.Context, user *user.User, password string) error
+	Find(ctx context.Context, id userid.ID) (*user.User, error)
 	FindByEmail(ctx context.Context, email string) (*user.User, string, error)
 }
 
@@ -28,6 +29,24 @@ func (r *Repo) Insert(ctx context.Context, user *user.User, password string) err
 	)
 
 	return err
+}
+
+func (r *Repo) Find(ctx context.Context, userID userid.ID) (*user.User, error) {
+	usr := &user.User{}
+	var id []uint8
+
+	q := "SELECT id, email FROM users WHERE id = $1"
+	err := r.DB.QueryRow(q, userID.String()).Scan(&id, &usr.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	usr.ID, err = userid.FromString(string(id))
+	if err != nil {
+		return nil, err
+	}
+
+	return usr, nil
 }
 
 func (r *Repo) FindByEmail(ctx context.Context, email string) (*user.User, string, error) {
