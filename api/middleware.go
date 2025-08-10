@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"time"
 
 	"github.com/ishchenko-gv/go-example-app/api/apictx"
 	"github.com/ishchenko-gv/go-example-app/api/userapi"
@@ -63,6 +64,7 @@ func (m *middleware) JsonContentMiddleware(next http.Handler) http.Handler {
 
 func (m *middleware) LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		start := time.Now()
 		reqDump, err := httputil.DumpRequest(r, true)
 		if err != nil {
 			fmt.Printf("failed to dump request: %s\n", err.Error())
@@ -70,9 +72,12 @@ func (m *middleware) LoggingMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Printf("%s\n\n", string(reqDump))
+		fmt.Printf("%s\n", string(reqDump))
 
 		next.ServeHTTP(rw, r)
+
+		passed := time.Since(start)
+		fmt.Printf("duration %fs\n\n", passed.Seconds())
 	})
 }
 
