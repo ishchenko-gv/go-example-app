@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	CreateUser(ctx context.Context, user *User, password string) error
+	Register(ctx context.Context, user *User, password string) error
 	GetUser(ctx context.Context, userID userid.ID) (*User, error)
 	AuthenticateByEmail(ctx context.Context, email string, password string) (*User, error)
 }

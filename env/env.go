@@ -17,5 +17,5 @@ func Setup() {
 		os.Setenv(parts[0], parts[1])
 	}
 
-	fmt.Printf("Environment has been set:\n%s\n", string(b))
+	fmt.Printf("Environment has been set:\n\n%s\n\n", string(b))
 }

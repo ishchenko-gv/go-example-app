@@ -17,8 +17,6 @@ func Connect() {
 
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", user, pass, name)
 
-	fmt.Printf("connStr: %s\n", connStr)
-
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)

@@ -32,7 +32,7 @@ func main() {
 
 	server := api.NewServer(handler)
 
-	fmt.Println("Staring http server...")
+	fmt.Println("Starting http server...")
 
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)

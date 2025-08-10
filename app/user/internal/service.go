@@ -14,7 +14,7 @@ type Service struct {
 
 var _ user.Service = (*Service)(nil)
 
-func (s *Service) CreateUser(ctx context.Context, user *user.User, password string) error {
+func (s *Service) Register(ctx context.Context, user *user.User, password string) error {
 	hashedPassword, err := hashPassword(password)
 	if err != nil {
 		return err

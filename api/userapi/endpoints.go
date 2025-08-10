@@ -36,7 +36,7 @@ func (ep *Endpoints) PostRegister(w http.ResponseWriter, r *http.Request) (any, 
 		return nil, err
 	}
 
-	return usr, ep.UserService.CreateUser(r.Context(), usr, reqBody.Password)
+	return usr, ep.UserService.Register(r.Context(), usr, reqBody.Password)
 }
 
 func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, error) {
