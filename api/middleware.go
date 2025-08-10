@@ -34,6 +34,25 @@ func chainMiddlewares(middlewares ...middlewareFunc) middlewareFunc {
 	}
 }
 
+func (m *middleware) PanicRecoveryMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				switch t := r.(type) {
+				case error:
+					fmt.Printf("panic: %v", t.Error())
+				default:
+					fmt.Printf("panic: %v", t)
+				}
+				http.Error(w, "internal error", http.StatusInternalServerError)
+				return
+			}
+		}()
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (m *middleware) JsonContentMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
@@ -47,7 +66,7 @@ func (m *middleware) LoggingMiddleware(next http.Handler) http.Handler {
 		reqDump, err := httputil.DumpRequest(r, true)
 		if err != nil {
 			fmt.Printf("failed to dump request: %s\n", err.Error())
-			http.Error(rw, "internal error", 500)
+			http.Error(rw, "internal error", http.StatusInternalServerError)
 			return
 		}
 
@@ -67,23 +86,21 @@ func (m *middleware) AuthMiddleware(next http.Handler) http.Handler {
 
 		if err != nil {
 			fmt.Printf("failed to read cookie: %s\n", err.Error())
-			http.Error(rw, "internal error", 500)
+			http.Error(rw, "internal error", http.StatusInternalServerError)
 			return
 		}
 
 		claims, err := userapi.VerifyJwt(t.Value)
 		if err != nil {
 			fmt.Printf("failed to verify jwt: %s\n", err.Error())
-			http.Error(rw, "internal error", 500)
+			http.Error(rw, "internal error", http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Printf("claims: %+v\n", claims)
 
 		usr, err := m.UserService.GetUser(r.Context(), claims.ID)
 		if err != nil {
 			fmt.Printf("failed to fetch user: %s\n", err.Error())
-			http.Error(rw, "internal error", 500)
+			http.Error(rw, "internal error", http.StatusInternalServerError)
 			return
 		}
 

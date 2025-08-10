@@ -15,8 +15,6 @@ type handler struct {
 	Order      *orderapi.Endpoints
 }
 
-type Endpoint func(http.ResponseWriter, *http.Request) (any, error)
-
 func NewHandler(
 	middleware *middleware,
 	userService user.Service,
@@ -36,9 +34,10 @@ func (h *handler) Setup() http.Handler {
 	h.setupOrderRoutes(mux)
 
 	wrappedMux := chainMiddlewares(
+		h.Middleware.PanicRecoveryMiddleware,
+		h.Middleware.LoggingMiddleware,
 		h.Middleware.JsonContentMiddleware,
 		h.Middleware.AuthMiddleware,
-		h.Middleware.LoggingMiddleware,
 	)(mux)
 
 	return wrappedMux

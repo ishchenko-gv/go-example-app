@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+type Endpoint func(http.ResponseWriter, *http.Request) (any, error)
+
 func wrap(endpoint Endpoint) http.HandlerFunc {
 	return jsonWriterWrap(endpoint)
 }
