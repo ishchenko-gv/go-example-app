@@ -44,13 +44,13 @@ func (h *handler) Setup() http.Handler {
 }
 
 func (h *handler) setupUserRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /users/self", wrap(h.User.Self))
-	mux.HandleFunc("POST /users/register", wrap(h.User.PostRegister))
-	mux.HandleFunc("POST /users/login", wrap(h.User.PostLogin))
+	mux.HandleFunc("GET /users/self", ep(h.User.Self))
+	mux.HandleFunc("POST /users/register", ep(h.User.PostRegister))
+	mux.HandleFunc("POST /users/login", ep(h.User.PostLogin))
 }
 
 func (h *handler) setupOrderRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /orders", wrap(h.Order.GetOrders))
-	mux.HandleFunc("GET /orders/{id}", wrap(h.Order.GetOrder))
-	mux.HandleFunc("POST /orders", wrap(h.Order.PostOrder))
+	mux.HandleFunc("GET /orders", ep(h.Order.GetOrders))
+	mux.HandleFunc("GET /orders/{id}", ep(h.Order.GetOrder))
+	mux.HandleFunc("POST /orders", ep(h.Order.PostOrder))
 }

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/ishchenko-gv/go-example-app/app/user"
@@ -29,12 +30,16 @@ func (s *Service) GetUser(ctx context.Context, userID userid.ID) (*user.User, er
 
 func (s *Service) AuthenticateByEmail(ctx context.Context, email string, password string) (*user.User, error) {
 	usr, hashedPassword, err := s.Repo.FindByEmail(ctx, email)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, user.ErrInvalidCredentials
+	}
+
 	if err != nil {
 		return nil, err
 	}
 
 	if !checkPassword(hashedPassword, password) {
-		return nil, errors.New("invalid email or password")
+		return nil, user.ErrInvalidCredentials
 	}
 
 	return usr, nil

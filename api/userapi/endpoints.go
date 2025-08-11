@@ -2,9 +2,11 @@ package userapi
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/ishchenko-gv/go-example-app/api/apictx"
+	"github.com/ishchenko-gv/go-example-app/api/apierr"
 	"github.com/ishchenko-gv/go-example-app/app/user"
 )
 
@@ -47,6 +49,10 @@ func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, err
 	}
 
 	usr, err := ep.UserService.AuthenticateByEmail(r.Context(), reqBody.Email, reqBody.Password)
+	if errors.Is(err, user.ErrInvalidCredentials) {
+		return nil, apierr.Wrap(err, "wrong email or password", http.StatusBadRequest)
+	}
+
 	if err != nil {
 		return nil, err
 	}
