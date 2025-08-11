@@ -20,7 +20,7 @@ func NewEndpoints(userService user.Service) *Endpoints {
 	}
 }
 
-func (ep *Endpoints) Self(w http.ResponseWriter, r *http.Request) (any, error) {
+func (ep *Endpoints) GetSelf(w http.ResponseWriter, r *http.Request) (any, error) {
 	return apictx.User(r), nil
 }
 
@@ -33,12 +33,17 @@ func (ep *Endpoints) PostRegister(w http.ResponseWriter, r *http.Request) (any, 
 
 	usr := user.NewUser(reqBody.Email)
 
+	err = ep.UserService.Register(r.Context(), usr, reqBody.Password)
+	if err != nil {
+		return nil, err
+	}
+
 	err = issueJwt(w, usr)
 	if err != nil {
 		return nil, err
 	}
 
-	return usr, ep.UserService.Register(r.Context(), usr, reqBody.Password)
+	return usr, nil
 }
 
 func (ep *Endpoints) PostLogin(w http.ResponseWriter, r *http.Request) (any, error) {

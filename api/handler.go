@@ -44,7 +44,7 @@ func (h *handler) Setup() http.Handler {
 }
 
 func (h *handler) setupUserRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /users/self", ep(h.User.Self))
+	mux.HandleFunc("GET /users/self", ep(h.User.GetSelf))
 	mux.HandleFunc("POST /users/register", ep(h.User.PostRegister))
 	mux.HandleFunc("POST /users/login", ep(h.User.PostLogin))
 }
